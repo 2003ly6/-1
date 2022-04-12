@@ -1,0 +1,112 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+int isoperator(char c)
+{
+	if(c=='+'||c=='-'||c=='*'||c=='/') return 1;
+	else return 0;
+}
+
+void moveOperator(char *p)
+{
+	while(*p!='\0')
+	{
+		*p=*(p+1);
+		p++;
+	}
+}
+
+void moveOperand(float *p,float *end)
+{
+	while(p!=end)
+	{
+		*p=*(p+1);
+		p++;
+	}
+}
+
+int main()
+{
+	printf("Please input a string expression including + - * /\n");
+	char strExp[100];
+	scanf("%s",strExp);
+	char operators[100]={'\0'};
+	float operands[100];
+    int operatorsIndex=0,i;
+    for(i=0;i<strlen(strExp);i++)
+	{
+    	if(isoperator(strExp[i]))
+		{
+    		operators[operatorsIndex]=strExp[i];
+    		operatorsIndex++;
+		}
+	}
+	int operandsIndex=0;
+	for(i=0;i<strlen(strExp);i++)
+	{
+		char temp[100]={'\0'};
+		int tempIndex=0;
+		while(!isoperator(strExp[i]))
+		{
+			temp[tempIndex]=strExp[i];
+			i++;
+			tempIndex++;
+	    }
+		float floatV=atof(temp);
+		operands[operandsIndex++]=floatV;
+	}
+	
+	char *poperator=operators;
+	float *poperand=operands;
+	while(*poperator!='\0')
+	{
+		if(*poperator=='*')
+		{
+			float a=*poperand;
+			float b=*(poperand+1);
+			float res=a*b;
+			*poperand=res;
+			moveOperator(poperator);
+			moveOperand(poperand+1,&operands[operandsIndex--]);
+		}else if(*poperator=='/')
+		{
+			float a=*poperand;
+			float b=*(poperand+1);
+			float res=a/b;
+			*poperand=res;
+			moveOperator(poperator);
+			moveOperand(poperand+1,&operands[operandsIndex--]);
+		}else 
+		{
+			poperator++;
+			poperand++;
+		}
+	}
+	poperator=operators;
+	poperand=operands;
+	while(*poperator!='\0')
+	{
+		if(*poperator=='+')
+		{
+			float a=*poperand;
+			float b=*(poperand+1);
+			float res=a+b;
+			*poperand=res;
+			moveOperator(poperator);
+			moveOperand(poperand+1,&operands[operandsIndex--]);	
+		}else if(*poperator=='-')
+		{
+			float a=*poperand;
+			float b=*(poperand+1);
+			float res=a-b;
+			*poperand=res;
+			moveOperator(poperator);
+			moveOperand(poperand+1,&operands[operandsIndex--]);
+		}
+
+	}
+	printf("the result is %0.2f\n",operands[0]);
+	
+	return 0;
+}
