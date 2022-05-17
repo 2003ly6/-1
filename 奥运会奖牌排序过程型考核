@@ -1,0 +1,91 @@
+#include<stdio.h>
+
+struct Country
+{
+	char name[100];
+	int goldNum;
+	int silverNum;
+	int bronzeNum;
+	int totalNum;
+};
+
+typedef struct Country Counrtry;
+
+void printfCountry(Country c)
+{
+	printf("%s\t%d\t%d\t%d\t%d\n\n",c.name,c.goldNum,c.silverNum,c.bronzeNum,c.totalNum);
+}
+
+int main()
+{
+	Country c[8];
+	FILE* fp=fopen("D:/file.txt","r");
+	printf("国家\t金牌\t银牌\t铜牌\t总数\n");
+	if(fp==NULL)
+	{
+		printf("Error\n");
+		return 0;
+	}
+	
+	char str[8][100]={'\0'};
+	
+	for(int i=0;i<8;i++)
+	{
+		fscanf(fp,"%s %d %d %d %d",&c[i].name,&c[i].goldNum,&c[i].silverNum,&c[i].bronzeNum,&c[i].totalNum);
+	}
+	
+	fclose(fp);
+	
+	for(int i=0;i<8;i++)
+	{
+		printf("%s\t%d\t%d\t%d\t%d\n",c[i].name,c[i].goldNum,c[i].silverNum,c[i].bronzeNum,c[i].totalNum);
+	}
+	
+	Country max=c[0];
+	for(int i=1;i<8;i++)
+	{
+		if(max.totalNum<c[i].totalNum)
+			max=c[i];
+	}
+	printf("\n奖牌最多的国家信息:\n");
+	printfCountry(max);
+	
+	Country min=c[0];
+	for(int i=1;i<8;i++)
+	{
+		if(min.totalNum>c[i].totalNum)
+			min=c[i];
+	}
+	printf("\n奖牌最少的国家信息:\n");
+	printfCountry(min);
+	
+	Country a[8];
+	for(int i=0;i<8;i++)
+	{
+		Country b=c[i];
+		a[i]=b;
+	} 
+	int n=8;
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<n-1;j++)
+		{
+			if(a[j].totalNum>a[j+1].totalNum)
+			{
+				Country t=a[j];
+				a[j]=a[j+1];
+				a[j+1]=t;
+			}
+		}
+	}
+	//将排序结果保存到file2文件中去 
+	FILE* gp=fopen("D:/file2.txt","w+");
+	fprintf(gp,"国家\t金牌\t银牌\t铜牌\t总数\n");
+	for(int k=0;k<8;k++)
+	{
+		fprintf(gp,"%s\t%d\t%d\t%d\t%d\n",a[k].name,a[k].goldNum,a[k].silverNum,a[k].bronzeNum,a[k].totalNum);
+	}
+	fclose(gp);
+	
+	return 0;
+}
